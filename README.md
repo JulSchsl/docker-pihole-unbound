@@ -1,5 +1,7 @@
 # Pi-Hole + Unbound on Docker
 
+This fork has a modified Unbound config with the forward-zone mentioned below removed.
+
 #### (Synology-compatible!)
 
 ## Description
