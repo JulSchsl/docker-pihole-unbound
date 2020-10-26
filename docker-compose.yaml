@@ -2,12 +2,12 @@ version: '2'
 
 services:
   pihole:
+    depends_on: 
+      - unbound
     container_name: pihole
     image: pihole/pihole:latest
     hostname: pi-hole
     mac_address: d0:ca:ab:cd:ef:01
-    cap_add:
-      - NET_ADMIN
     ports:
       - 443/tcp
       - 53/tcp
@@ -16,40 +16,41 @@ services:
       - 80/tcp
       - 22/tcp
     environment:
-      ServerIP: 192.168.1.5
+      ServerIP: 192.168.178.201
       WEBPASSWORD: ${WEBPASSWORD}
-      DNS1: 192.168.1.6
-      DNS2: 192.168.1.13
+      DNS1: 192.168.178.202
+      DNS2: 192.168.178.1
     volumes:
-      - /volume1/docker/pihole-unbound/pihole/volume:/etc/pihole:rw
-      - /volume1/docker/pihole-unbound/pihole/config/hosts:/etc/hosts:ro
-      - /volume1/docker/pihole-unbound/pihole/config/resolv.conf:/etc/resolv.conf:ro
-      - /volume1/docker/pihole-unbound/pihole/config/dnsmasq.conf:/etc/dnsmasq.d/02-network.conf:ro
-      - /volume1/docker/pihole-unbound/pihole/config/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf:ro
+      - /root/git/docker-pihole-unbound/pihole/volume:/etc/pihole:rw
+      - /root/git/docker-pihole-unbound/pihole/config/hosts:/etc/hosts:ro
+      - /root/git/docker-pihole-unbound/pihole/config/resolv.conf:/etc/resolv.conf:ro
+      - /root/git/docker-pihole-unbound/pihole/config/dnsmasq.conf:/etc/dnsmasq.d/02-network.conf:ro
+      - /root/git/docker-pihole-unbound/pihole/config/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf:ro
     networks:
       home:
-        ipv4_address: 192.168.1.5
+        ipv4_address: 192.168.178.201
     restart: always
+
   unbound:
     container_name: unbound
     image: mvance/unbound:latest
-    hostname: syn-unbound
+    hostname: unbound
     mac_address: d0:ca:ab:cd:ef:02
     ports:
       - 53/tcp
       - 53/udp
     networks:
       home:
-        ipv4_address: 192.168.1.6
+        ipv4_address: 192.168.178.202
     restart: always
 
 networks:
   home:
     driver: macvlan
     driver_opts:
-      parent: ovs_eth1
+      parent: enp3s0
     ipam:
       config:
-        - subnet: 192.168.1.0/24
-          gateway: 192.168.1.1
-          ip_range: 192.168.1.5/30 # 192.168.1.5 and 192.168.1.6
+        - subnet: 192.168.178.0/24
+          gateway: 192.168.178.1
+          ip_range: 192.168.178.201/30 # 192.168.178.201 and 192.168.178.202
