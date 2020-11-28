@@ -29,7 +29,7 @@ services:
     networks:
       home:
         ipv4_address: 192.168.178.201
-    restart: always
+    restart: unless-stopped
 
   unbound:
     container_name: unbound
@@ -42,7 +42,7 @@ services:
     networks:
       home:
         ipv4_address: 192.168.178.202
-    restart: always
+    restart: unless-stopped
 
 networks:
   home:
